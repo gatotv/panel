@@ -2561,7 +2561,11 @@ function updateCoinDisplay() {
     // CHANGE: Added "Collection" text
     document.getElementById('collectionCount').innerText = `${myPaints}/${paints}`;
 }
-function fireDownloadConfetti() { confetti({particleCount:100,spread:70,origin:{y:0.6}}); }
+function fireDownloadConfetti() { 
+    confetti({particleCount:100,spread:70,origin:{y:0.6}}); 
+    // Dodano przekierowanie do GitHub po 1 sekundzie (po wybuchu konfetti)
+    setTimeout(() => { window.open('https://github.com/GatoTV/panel', '_blank'); }, 1000);
+}
 function fireConfetti(shop) { if(shop) confetti({particleCount:50,spread:60,origin:{x:0.5,y:0.5}}); }
 window.togglePreviewTheme = function(el) { el.classList.toggle('light'); }
 
