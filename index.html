@@ -1099,11 +1099,18 @@ const REDIRECT_URI = 'https://gatotv.github.io/panel/';
 const DB_URL = "https://wersjabeta-8cf8c-default-rtdb.europe-west1.firebasedatabase.app/";
 
 // FIX: Wymuś czyszczenie Service Workerów i cache przeglądarki
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) { registration.unregister(); }
-    });
-}
+try {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) { registration.unregister(); }
+        });
+    }
+    if ('caches' in window) {
+        caches.keys().then(function(names) {
+            for (let name of names) caches.delete(name);
+        });
+    }
+} catch(e) {}
 
 // STATE
 let AppState = { 
@@ -1441,7 +1448,20 @@ window.onload = async () => {
         const t = new URLSearchParams(location.hash.substring(1)).get('access_token');
         if(t) { localStorage.setItem('tw_token', t); history.replaceState({},document.title,location.pathname); await verifyToken(t); return; }
     }
+    
     const t = localStorage.getItem('tw_token');
+    
+    // RESET CACHE IF NOT LOGGED IN
+    if (!t) {
+        localStorage.clear();
+        sessionStorage.clear();
+        if ('caches' in window) {
+            caches.keys().then(names => {
+                names.forEach(name => caches.delete(name));
+            });
+        }
+    }
+
     if(t) await verifyToken(t); else showLoginScreen();
 };
 
@@ -1470,7 +1490,18 @@ async function verifyToken(t) {
     } catch(e) { localStorage.removeItem('tw_token'); showLoginScreen(); }
 }
 
-function logout() { localStorage.removeItem('tw_token'); location.reload(); }
+function logout() { 
+    // AGGRESSIVE CACHE CLEAR
+    localStorage.clear();
+    sessionStorage.clear();
+    if ('caches' in window) {
+        caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+        });
+    }
+    // Force reload from server with timestamp to bypass cache
+    window.location.href = window.location.pathname + "?v=" + new Date().getTime();
+}
 
 // UI
 function showLoginScreen() {
@@ -2886,3 +2917,4 @@ window.removeModerator = async function(nick) { if(confirm("Usunąć?")) { await
 </script>
 </body>
 </html>
+
