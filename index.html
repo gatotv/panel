@@ -1693,6 +1693,7 @@ window.load7tvInPanel = async function(manualId = null) {
         
         // SYNC WITH API (So plugin can see it)
         if(AppState.user) await api(`premium/${AppState.user.login.toLowerCase()}/sevenTvId`, "PUT", id);
+        if(AppState.kickNick) await api(`premium/${AppState.kickNick}/sevenTvId`, "PUT", id);
         
         grid.innerHTML = '';
         if(d.emotes.length === 0) { grid.innerHTML = 'Pusty zestaw.'; return; }
@@ -1717,6 +1718,7 @@ window.disconnect7tv = async function() {
     
     // SYNC WITH API
     if(AppState.user) await api(`premium/${AppState.user.login.toLowerCase()}/sevenTvId`, "DELETE");
+    if(AppState.kickNick) await api(`premium/${AppState.kickNick}/sevenTvId`, "DELETE");
 }
 
 function update7tvUI(isLoaded, id) {
@@ -2802,6 +2804,10 @@ async function fetchCloudData() {
         const loadoutRes = await fetch(`${DB_URL}/premium/${login}.json`);
         const loadoutData = loadoutRes.ok ? (await loadoutRes.json() || {}) : {};
         AppState.loadout = loadoutData;
+        if(loadoutData.sevenTvId) {
+            AppState.sevenTvId = loadoutData.sevenTvId;
+            localStorage.setItem('gato_7tv_panel_id', loadoutData.sevenTvId);
+        }
 
         // 4. FETCH SHOP (ACTIVE)
         const shopRes = await fetch(`${DB_URL}/shop/active.json`);
