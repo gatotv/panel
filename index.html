@@ -6,9 +6,6 @@
 <title>Gato.TV Panel</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&family=Permanent+Marker&family=Courier+Prime&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -1097,15 +1094,6 @@ const CLIENT_ID = 'l0agnxl8yeto7wda5wvblpg1mr55db';
 // WAŻNE: Upewnij się, że w konsoli Twitch (dev.twitch.tv) ten Client ID ma dodany poniższy link w "OAuth Redirect URLs"
 const REDIRECT_URI = 'https://gatotv.github.io/panel/';
 const DB_URL = "https://wersjabeta-8cf8c-default-rtdb.europe-west1.firebasedatabase.app/";
-
-// FIX: Usuwamy Service Workery (naprawia stare wersje), ale NIE czyścimy cache przy każdym wejściu
-try {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) { registration.unregister(); }
-        });
-    }
-} catch(e) {}
 
 // STATE
 let AppState = { 
